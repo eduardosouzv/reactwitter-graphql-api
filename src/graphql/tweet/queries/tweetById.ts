@@ -1,4 +1,5 @@
 import { GraphQLString } from 'graphql';
+import Tweet from '../../../models/Tweet';
 import tweetTypeDef from '../tweetTypeDef';
 
 export default {
@@ -6,9 +7,5 @@ export default {
   args: {
     id: { type: GraphQLString },
   },
-  resolve: (_: unknown, { id }: { id: string }) => ({
-    _id: '1',
-    author: 'eduardo',
-    content: 'lorem ipsum dolor sit amet consectetur adipiscing elit',
-  }),
+  resolve: (_: unknown, { id }: { id: string }) => Tweet.findById(id),
 };
