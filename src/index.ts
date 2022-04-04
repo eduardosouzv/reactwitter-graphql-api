@@ -1,8 +1,8 @@
-import { initApp } from './app';
+import { startServer } from './app';
 import { connectDatabase } from './database';
 
 (async () => {
   await connectDatabase();
 
-  initApp();
+  startServer();
 })();

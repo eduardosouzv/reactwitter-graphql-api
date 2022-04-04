@@ -1,25 +1,9 @@
-import Koa from 'koa';
-import mount from 'koa-mount';
-import { graphqlHTTP } from 'koa-graphql';
+import { ApolloServer } from 'apollo-server';
 
-import schema from './graphql/schema';
+import typeDefs from './graphql/typeDefs';
+import resolvers from './graphql/resolvers';
 
-export function initApp() {
-  const app = new Koa();
-
-  app.on('error', err => {
-    console.log('server error', err);
-  });
-
-  app.use(
-    mount(
-      '/graphql',
-      graphqlHTTP({
-        schema,
-        graphiql: true,
-      }),
-    ),
-  );
-
-  app.listen(3333, () => console.log('runnin at http://localhost:3333'));
+export function startServer() {
+  const server = new ApolloServer({ typeDefs, resolvers });
+  server.listen().then(({ url }) => console.log(`running at ${url}`));
 }
