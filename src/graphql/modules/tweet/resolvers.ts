@@ -8,7 +8,7 @@ interface ITweet {
 export default {
   Query: {
     tweets: async () => {
-      const tweets = await Tweet.find().populate('author');
+      const tweets = await Tweet.find().populate('author').sort({ _id: -1 });
 
       return tweets.map((tweet) => ({
         id: String(tweet._id),
