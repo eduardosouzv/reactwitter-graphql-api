@@ -1,17 +1,18 @@
 type User {
-  _id: ID!
+  id: ID!
   username: String!
 }
 
-type UserRegistred {
+type UserWithToken {
   user: User!
   token: String!
 }
 
 type Query {
-  loginUser(username: String!, password: String!): String
+  loginUser(username: String!, password: String!): UserWithToken
+  getCurrentUser: User!
 }
 
 type Mutation {
-  registerUser(username: String!, password: String!): UserRegistred!
+  registerUser(username: String!, password: String!): UserWithToken!
 }

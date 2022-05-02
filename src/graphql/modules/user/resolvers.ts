@@ -1,8 +1,12 @@
 import User from '../../../models/User';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 import { SECRET } from '../../../utils/constants';
+
+import Payload from '../../interfaces/Payload';
+import { AuthenticationError } from 'apollo-server';
+import { validateTokenInPrivateResolver } from '../../../utils/ensureAuth';
 
 interface IUser {
   _id: string;
@@ -17,7 +21,6 @@ export default {
       const { username, password } = args;
 
       const foundUser = await User.findOne({ username });
-
       if (!foundUser) {
         throw new Error('401');
       }
@@ -26,16 +29,34 @@ export default {
         password,
         foundUser.password
       );
-
       if (!isValidPassword) {
         throw new Error('401');
       }
 
-      const token = jwt.sign({ id: foundUser._id }, SECRET, {
-        expiresIn: '1d',
-      });
+      const token = jwt.sign(
+        { id: foundUser._id, username: foundUser.username },
+        SECRET,
+        {
+          expiresIn: '1d',
+        }
+      );
 
-      return token;
+      return {
+        user: {
+          id: String(foundUser._id),
+          username,
+        },
+        token,
+      };
+    },
+    getCurrentUser: async (_: unknown, args: unknown, data: Payload) => {
+      validateTokenInPrivateResolver(data);
+      const { id, username } = data;
+
+      return {
+        id,
+        username,
+      };
     },
   },
   Mutation: {
@@ -49,12 +70,17 @@ export default {
         password: hashedPassword,
       });
 
-      const token = jwt.sign({ id: user._id }, SECRET, {
-        expiresIn: '1d',
-      });
+      const token = jwt.sign(
+        { id: user._id, username: user.username },
+        SECRET,
+        {
+          expiresIn: '1d',
+        }
+      );
 
       return {
-        user,
+        id: user._id,
+        ...user,
         token,
       };
     },
