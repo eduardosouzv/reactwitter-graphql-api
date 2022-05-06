@@ -1,7 +1,10 @@
 import mongoose from 'mongoose';
 
 const Schema = new mongoose.Schema({
-  author: String,
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
   content: String,
 });
 

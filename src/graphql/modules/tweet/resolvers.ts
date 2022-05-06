@@ -1,33 +1,47 @@
 import Tweet from '../../../models/Tweet';
-import { validateTokenInPrivateResolver } from '../../../utils/ensureAuth';
 
 interface ITweet {
-  author: String;
+  authorId: String;
   content: String;
 }
 
 export default {
   Query: {
-    tweets: async (_: unknown, args: unknown, ctx: { id: string }) => {
-      validateTokenInPrivateResolver(ctx);
+    tweets: async () => {
+      const tweets = await Tweet.find().populate('author').sort({ _id: -1 });
 
-      return await Tweet.find().sort({ _id: -1 });
+      return tweets.map((tweet) => ({
+        id: String(tweet._id),
+        author: {
+          id: String(tweet.author._id),
+          username: tweet.author.username,
+        },
+        content: tweet.content,
+      }));
     },
-    tweetById: async (
-      _: unknown,
-      { id }: { id: string },
-      ctx: { id: string }
-    ) => {
-      validateTokenInPrivateResolver(ctx);
+    tweetById: async (_: unknown, { id }: { id: string }) => {
+      try {
+        const tweet = await Tweet.findById(id).populate('author');
 
-      return await Tweet.findById(id);
+        return {
+          id: String(tweet._id),
+          author: {
+            id: String(tweet.author._id),
+            username: tweet.author.username,
+          },
+          content: tweet.content,
+        };
+      } catch {
+        return null;
+      }
     },
   },
   Mutation: {
-    createTweet: async (_: unknown, args: ITweet, ctx: { id: string }) => {
-      validateTokenInPrivateResolver(ctx);
-
-      return await Tweet.create(args);
+    createTweet: async (_: unknown, args: ITweet) => {
+      const { authorId: author, content } = args;
+      const newTweet = await Tweet.create({ author, content });
+      console.log(newTweet);
+      return newTweet;
     },
   },
 };
