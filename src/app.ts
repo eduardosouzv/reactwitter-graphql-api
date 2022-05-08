@@ -6,11 +6,18 @@ import resolvers from './graphql/resolvers';
 
 import { putTokenInContext } from './utils/ensureAuth';
 
-export function startServer() {
-  const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    context: putTokenInContext,
-  });
-  server.listen().then(({ url }) => console.log(`running at ${url}`));
-}
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: putTokenInContext,
+});
+
+export default {
+  start: async () => {
+    return server.listen();
+  },
+
+  stop: () => {
+    return server.stop();
+  },
+};

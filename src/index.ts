@@ -1,8 +1,9 @@
-import { startServer } from './app';
+import server from './app';
 import { connectDatabase } from './database';
 
 (async () => {
   await connectDatabase();
 
-  startServer();
+  const { url } = await server.start();
+  console.log(`running at ${url}`);
 })();

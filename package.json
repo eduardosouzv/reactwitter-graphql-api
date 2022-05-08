@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon --exec ts-node src/index.ts",
-    "test": "jest"
+    "test": "NODE_ENV=TEST jest"
   },
   "dependencies": {
     "@graphql-tools/load-files": "^6.5.3",
