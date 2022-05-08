@@ -3,6 +3,7 @@ import request from 'supertest';
 import server from '../src/app';
 
 import { connectDatabase } from '../src/database';
+import User from '../src/models/User';
 
 describe('User', () => {
   beforeAll(async () => {
@@ -11,6 +12,7 @@ describe('User', () => {
   });
 
   afterAll(async () => {
+    await User.deleteMany({});
     await mongoose.connection.close();
     await server.stop();
   });
