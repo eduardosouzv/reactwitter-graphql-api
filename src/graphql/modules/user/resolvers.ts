@@ -79,8 +79,10 @@ export default {
       );
 
       return {
-        id: user._id,
-        ...user,
+        user: {
+          id: String(user._id),
+          name: user.username,
+        },
         token,
       };
     },
