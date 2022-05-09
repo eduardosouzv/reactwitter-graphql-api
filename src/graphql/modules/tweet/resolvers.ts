@@ -40,7 +40,6 @@ export default {
     createTweet: async (_: unknown, args: ITweet) => {
       const { authorId: author, content } = args;
       const newTweet = await Tweet.create({ author, content });
-      console.log(newTweet);
       return newTweet;
     },
   },
