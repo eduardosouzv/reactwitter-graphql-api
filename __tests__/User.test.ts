@@ -22,7 +22,7 @@ describe('User', () => {
     await User.deleteMany({});
   });
 
-  xit('should create an user', async () => {
+  it('should create an user', async () => {
     const response = await request('http://localhost:4000/')
       .post('/')
       .send({
