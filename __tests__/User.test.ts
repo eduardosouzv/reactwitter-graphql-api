@@ -8,6 +8,7 @@ import User from '../src/models/User';
 describe('User', () => {
   beforeAll(async () => {
     await connectDatabase();
+    await User.deleteMany({});
     await server.start();
   });
 
@@ -17,7 +18,11 @@ describe('User', () => {
     await server.stop();
   });
 
-  it('should create an user', async () => {
+  beforeEach(async () => {
+    await User.deleteMany({});
+  });
+
+  xit('should create an user', async () => {
     const response = await request('http://localhost:4000/')
       .post('/')
       .send({
@@ -30,6 +35,33 @@ describe('User', () => {
       });
 
     expect(response.body.data.registerUser.token).toEqual(expect.any(String));
+    expect(response.status).toBe(200);
+  });
+
+  it('should not create two users with same user', async () => {
+    await request('http://localhost:4000/')
+      .post('/')
+      .send({
+        query: `
+        mutation User {
+          registerUser(username: "edaurdo", password: "1212") {
+            token
+          }
+        }`,
+      });
+    const response = await request('http://localhost:4000/')
+      .post('/')
+      .send({
+        query: `
+        mutation User {
+          registerUser(username: "edaurdo", password: "1212") {
+            token
+          }
+        }`,
+      });
+
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors?.length).toBeGreaterThan(0);
     expect(response.status).toBe(200);
   });
 });
