@@ -44,7 +44,7 @@ export default {
       return {
         user: {
           id: String(foundUser._id),
-          username,
+          name: username,
         },
         token,
       };
@@ -55,7 +55,7 @@ export default {
 
       return {
         id,
-        username,
+        name: username,
       };
     },
   },
