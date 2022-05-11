@@ -5,8 +5,9 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import { SECRET } from '../../../utils/constants';
 
 import Payload from '../../interfaces/Payload';
-import { AuthenticationError } from 'apollo-server';
 import { validateTokenInPrivateResolver } from '../../../utils/ensureAuth';
+
+import UserController from '../../../controllers/UserController';
 
 interface IUser {
   _id: string;
@@ -17,74 +18,10 @@ interface IUser {
 
 export default {
   Query: {
-    loginUser: async (_: unknown, args: IUser) => {
-      const { username, password } = args;
-
-      const foundUser = await User.findOne({ username });
-      if (!foundUser) {
-        throw new Error('401');
-      }
-
-      const isValidPassword = await bcrypt.compare(
-        password,
-        foundUser.password
-      );
-      if (!isValidPassword) {
-        throw new Error('401');
-      }
-
-      const token = jwt.sign(
-        { id: foundUser._id, username: foundUser.username },
-        SECRET,
-        {
-          expiresIn: '1d',
-        }
-      );
-
-      return {
-        user: {
-          id: String(foundUser._id),
-          name: username,
-        },
-        token,
-      };
-    },
-    getCurrentUser: async (_: unknown, args: unknown, data: Payload) => {
-      validateTokenInPrivateResolver(data);
-      const { id, username } = data;
-
-      return {
-        id,
-        name: username,
-      };
-    },
+    loginUser: UserController.loginUser,
+    getCurrentUser: UserController.getCurrentUser,
   },
   Mutation: {
-    registerUser: async (_: unknown, args: IUser) => {
-      const { username, password } = args;
-
-      const hashedPassword = bcrypt.hashSync(password, 8);
-
-      const user: IUser = await User.create({
-        username,
-        password: hashedPassword,
-      });
-
-      const token = jwt.sign(
-        { id: user._id, username: user.username },
-        SECRET,
-        {
-          expiresIn: '1d',
-        }
-      );
-
-      return {
-        user: {
-          id: String(user._id),
-          name: user.username,
-        },
-        token,
-      };
-    },
+    registerUser: UserController.registerUser,
   },
 };
