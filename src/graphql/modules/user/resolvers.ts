@@ -1,12 +1,3 @@
-import User from '../../../models/User';
-import bcrypt from 'bcryptjs';
-import jwt, { JwtPayload } from 'jsonwebtoken';
-
-import { SECRET } from '../../../utils/constants';
-
-import Payload from '../../interfaces/Payload';
-import { validateTokenInPrivateResolver } from '../../../utils/ensureAuth';
-
 import UserController from '../../../controllers/UserController';
 
 interface IUser {
