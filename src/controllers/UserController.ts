@@ -1,6 +1,5 @@
-import { AuthenticationError } from 'apollo-server';
 import bcrypt from 'bcryptjs';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 import User from '../models/User';
 import { SECRET } from '../utils/constants';
@@ -15,7 +14,7 @@ interface IUser {
 }
 
 class UserController {
-  async loginUser(parent: unknown, args: IUser, context: Payload) {
+  async authenticate(parent: unknown, args: IUser, context: Payload) {
     const { username, password } = args;
 
     const foundUser = await User.findOne({ username });
@@ -45,7 +44,7 @@ class UserController {
     };
   }
 
-  async getCurrentUser(parent: unknown, args: unknown, context: Payload) {
+  async showCurrent(parent: unknown, args: unknown, context: Payload) {
     validateTokenInPrivateResolver(context);
     const { id, username } = context;
 
@@ -55,7 +54,7 @@ class UserController {
     };
   }
 
-  async registerUser(parent: unknown, args: IUser, context: Payload) {
+  async store(parent: unknown, args: IUser, context: Payload) {
     const { username, password } = args;
 
     const hashedPassword = bcrypt.hashSync(password, 8);

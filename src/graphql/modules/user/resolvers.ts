@@ -9,10 +9,10 @@ interface IUser {
 
 export default {
   Query: {
-    loginUser: UserController.loginUser,
-    getCurrentUser: UserController.getCurrentUser,
+    loginUser: UserController.authenticate,
+    getCurrentUser: UserController.showCurrent,
   },
   Mutation: {
-    registerUser: UserController.registerUser,
+    registerUser: UserController.store,
   },
 };
